@@ -1,5 +1,5 @@
 import streamlit as st
-import openai
+from openai import AzureOpenAI
 import os
 from dotenv import load_dotenv
 
@@ -8,8 +8,10 @@ load_dotenv()
 st.set_page_config(page_title="Chatbot", layout="centered")
 
 st.title("Chatbot")
-client = openai.OpenAI(
-    api_key=os.getenv("OPENAI_KEY")
+client = AzureOpenAI(
+    api_key=os.getenv("AZURE_OPENAI_KEY"),
+    api_version=os.getenv("AZURE_API_VERSION"),
+    azure_endpoint=os.getenv("AZURE_ENDPOINT")
 )
 # Initialize session state to store the conversation
 if "messages" not in st.session_state:
@@ -22,7 +24,7 @@ def generate_response(prompt, messages_so_far):
     """
 
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         messages=messages_so_far + [{"role": "user", "content": prompt}]
     )
     return response.choices[0].message.content
